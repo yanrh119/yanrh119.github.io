@@ -29,8 +29,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .prose img { display: block; max-width: 100%; height: auto; margin: 26px auto; }
 .prose blockquote { border-left: 2px solid var(--line); color: var(--muted); padding-left: 20px; margin: 25px 0; }
 .prose pre { overflow: auto; padding: 15px; background: color-mix(in srgb, var(--text) 6%, transparent); }
-.continue { color: var(--accent); display: inline-block; margin-top: 8px; font: 12px/1.5 system-ui, sans-serif; }
-.continue span { padding-left: 4px; }
+.continue { color: var(--accent); display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; padding: 0; border: 0; background: none; font: 12px/1.5 system-ui, sans-serif; }
+.continue[hidden], .prose[hidden] { display: none; }
+.chevron { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.expand-toggle[aria-expanded="true"] .chevron { transform: rotate(180deg); }
 .back { display: inline-block; color: var(--muted); font: 12px/1.4 system-ui, sans-serif; margin: 50px 0 12px; }
 .empty { color: var(--muted); margin: 45px 0; }
 footer { display: flex; justify-content: space-between; color: var(--faint); padding: 52px 0 60px; letter-spacing: .06em; }

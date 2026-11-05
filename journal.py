@@ -103,8 +103,16 @@ def card(entry, full=False):
     heading = f'<{tag}>{escape(entry["title"])}</{tag}>' if full and entry['title'] else (
         f'<{tag}><a href="{link}">{escape(entry["title"])}</a></{tag}>' if entry['title'] else '')
     date = entry['date'].isoformat()
-    continue_link = f'<a class="continue" href="{link}">继续阅读 <span aria-hidden="true">↗</span></a>' if more else ''
-    return f'''<article class="entry"><div class="entry-date"><a href="{link}"><time datetime="{date}">{date}</time></a></div>{heading}<div class="prose">{render_body(body, entry, path)}</div>{continue_link}</article>'''
+    prose = f'<div class="prose">{render_body(body, entry, path)}</div>'
+    if more:
+        expanded_id = f'expanded-{entry["slug"]}'
+        arrow = '<svg class="chevron" aria-hidden="true" viewBox="0 0 12 12"><path d="m2.5 4 3.5 3.5L9.5 4" /></svg>'
+        prose = (f'<div class="prose entry-excerpt">{render_body(body, entry, path)}</div>'
+                 f'<div class="prose entry-full" id="{expanded_id}" hidden>{render_body(entry["body"], entry, path)}</div>'
+                 f'<a class="continue expand-fallback" href="{link}">展开 {arrow}</a>'
+                 f'<button class="continue expand-toggle" type="button" aria-expanded="false" '
+                 f'aria-controls="{expanded_id}" hidden><span>展开</span>{arrow}</button>')
+    return f'''<article class="entry"><div class="entry-date"><a href="{link}"><time datetime="{date}">{date}</time></a></div>{heading}{prose}</article>'''
 
 
 def build():

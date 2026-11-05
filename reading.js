@@ -4,6 +4,22 @@
     if (theme === 'light') document.documentElement.dataset.theme = 'light';
   } catch (_) {}
   document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.expand-toggle').forEach(function (button) {
+      const entry = button.closest('.entry');
+      const excerpt = entry.querySelector('.entry-excerpt');
+      const full = entry.querySelector('.entry-full');
+      const fallback = entry.querySelector('.expand-fallback');
+      if (!excerpt || !full || !fallback) return;
+      fallback.hidden = true;
+      button.hidden = false;
+      button.addEventListener('click', function () {
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        excerpt.hidden = !expanded;
+        full.hidden = expanded;
+        button.setAttribute('aria-expanded', String(!expanded));
+        button.querySelector('span').textContent = expanded ? '展开' : '收起';
+      });
+    });
     const theme = document.querySelector('.theme-toggle');
     if (theme) {
       theme.hidden = false;
