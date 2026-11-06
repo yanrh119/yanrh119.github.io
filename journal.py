@@ -2,6 +2,7 @@
 import argparse
 import datetime as dt
 import functools
+import hashlib
 import html
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -71,12 +72,14 @@ def render_body(text, entry, prefix):
 
 def layout(content, root, title='', article=False):
     head_title = f'{title} · YanrhArcheive' if title else 'YanrhArcheive'
+    script_version = hashlib.sha256((ROOT / 'reading.js').read_bytes()).hexdigest()[:12]
+    style_version = hashlib.sha256((ROOT / 'style.css').read_bytes()).hexdigest()[:12]
     top = (f'<a class="back" href="{root}">← 返回 / Back</a>' if article else
            '<div class="masthead"><p class="eyebrow">A PERSONAL ARCHIVE</p><h1>YanrhArcheive</h1></div>')
     return f'''<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer">
-<title>{escape(head_title)}</title><script src="{root}reading.js"></script><link rel="stylesheet" href="{root}style.css"></head>
+<title>{escape(head_title)}</title><script src="{root}reading.js?v={script_version}"></script><link rel="stylesheet" href="{root}style.css?v={style_version}"></head>
 <body><a class="skip" href="#writing">跳至正文</a><div class="shell"><header class="topbar"><a class="wordmark" href="{root}" aria-label="YanrhArcheive 首页">YA<span>.</span></a><button class="theme-toggle" type="button" aria-label="切换明暗主题" title="切换明暗主题" hidden>☾</button></header>
 {top}<main id="writing">{content}</main><footer><span>YanrhArcheive</span><a href="#" aria-label="返回顶部">↑</a></footer></div></body></html>'''
 
