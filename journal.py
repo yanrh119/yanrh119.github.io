@@ -42,20 +42,6 @@ def entries():
     return sorted(result, key=lambda item: (item['date'], item['slug']), reverse=True)
 
 
-def excerpt(body):
-    if '<!-- more -->' in body:
-        return body.split('<!-- more -->', 1)[0], True
-    blocks = re.split(r'\n\s*\n', body)
-    if len(body) <= 600 or len(blocks) < 2:
-        return body, False
-    selected = []
-    for block in blocks:
-        selected.append(block)
-        if len('\n\n'.join(selected)) >= 600:
-            break
-    return '\n\n'.join(selected), len(selected) < len(blocks)
-
-
 def render_body(text, entry, prefix):
     text = text.replace('<!-- more -->', '')
     rendered = markdown.markdown(text, extensions=['extra', 'sane_lists'])
@@ -98,17 +84,16 @@ def layout(content, root, title='', article=False):
 def card(entry, full=False):
     path = '' if full else f'entries/{entry["slug"]}/'
     link = './' if full else path
-    body, more = (entry['body'], False) if full else excerpt(entry['body'])
+    body = entry['body']
     tag = 'h1' if full else 'h2'
     heading = f'<{tag}>{escape(entry["title"])}</{tag}>' if full and entry['title'] else (
         f'<{tag}><a href="{link}">{escape(entry["title"])}</a></{tag}>' if entry['title'] else '')
     date = entry['date'].isoformat()
     prose = f'<div class="prose">{render_body(body, entry, path)}</div>'
-    if more:
+    if not full:
         expanded_id = f'expanded-{entry["slug"]}'
         arrow = '<svg class="chevron" aria-hidden="true" viewBox="0 0 12 12"><path d="m2.5 4 3.5 3.5L9.5 4" /></svg>'
-        prose = (f'<div class="prose entry-excerpt">{render_body(body, entry, path)}</div>'
-                 f'<div class="prose entry-full" id="{expanded_id}" hidden>{render_body(entry["body"], entry, path)}</div>'
+        prose = (f'<div class="prose entry-preview is-collapsed" id="{expanded_id}">{render_body(body, entry, path)}</div>'
                  f'<a class="continue expand-fallback" href="{link}">展开 {arrow}</a>'
                  f'<button class="continue expand-toggle" type="button" aria-expanded="false" '
                  f'aria-controls="{expanded_id}" hidden><span>展开</span>{arrow}</button>')
@@ -137,7 +122,7 @@ def build():
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(asset, target)
         (dest / 'index.html').write_text(layout(card(entry, True), '../../', entry['title'] or str(entry['date']), True), encoding='utf-8')
-    controls = '<div class="section-heading"><span>WRITING</span><button class="sort-toggle" type="button" aria-label="按时间正序排列" hidden>时间 ↓</button></div>'
+    controls = '<div class="section-heading"><button class="sort-toggle" type="button" aria-label="按时间正序排列" hidden>时间 ↓</button></div>'
     feed = controls + '<div id="entries">' + ''.join(card(entry) for entry in posts) + '</div>'
     if not posts:
         feed += '<p class="empty">这里还没有文章。</p>'

@@ -1,4 +1,5 @@
 (function () {
+  document.documentElement.classList.add('has-js');
   try {
     const theme = localStorage.getItem('yanrh-theme');
     if (theme === 'light') document.documentElement.dataset.theme = 'light';
@@ -6,18 +7,26 @@
   document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.expand-toggle').forEach(function (button) {
       const entry = button.closest('.entry');
-      const excerpt = entry.querySelector('.entry-excerpt');
-      const full = entry.querySelector('.entry-full');
+      const preview = entry.querySelector('.entry-preview');
       const fallback = entry.querySelector('.expand-fallback');
-      if (!excerpt || !full || !fallback) return;
+      if (!preview || !fallback) return;
       fallback.hidden = true;
-      button.hidden = false;
+      function refresh() {
+        if (button.getAttribute('aria-expanded') !== 'true') {
+          const clipped = preview.scrollHeight > preview.clientHeight + 1;
+          preview.classList.toggle('has-overflow', clipped);
+          button.hidden = !clipped;
+        }
+      }
+      refresh();
+      window.addEventListener('resize', refresh);
+      preview.addEventListener('load', refresh, true);
       button.addEventListener('click', function () {
         const expanded = button.getAttribute('aria-expanded') === 'true';
-        excerpt.hidden = !expanded;
-        full.hidden = expanded;
+        preview.classList.toggle('is-collapsed', expanded);
         button.setAttribute('aria-expanded', String(!expanded));
         button.querySelector('span').textContent = expanded ? '展开' : '收起';
+        if (expanded) refresh();
       });
     });
     const theme = document.querySelector('.theme-toggle');

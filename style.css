@@ -15,7 +15,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .eyebrow, .section-heading, .entry-date, footer { font: 500 11px/1.4 system-ui, sans-serif; letter-spacing: .13em; }
 .eyebrow { color: var(--accent); margin: 0 0 17px; }
 .masthead h1 { font: 400 clamp(37px, 7vw, 59px)/1.1 Georgia, serif; letter-spacing: -.045em; margin: 0; overflow-wrap: anywhere; }
-.section-heading { border-bottom: 1px solid var(--line); color: var(--faint); display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; }
+.section-heading { border-bottom: 1px solid var(--line); color: var(--faint); display: flex; justify-content: flex-end; align-items: center; padding-bottom: 16px; }
 .sort-toggle { color: var(--muted); border: 0; background: none; font: 11px/1.4 system-ui, sans-serif; letter-spacing: .03em; padding: 3px 0 3px 10px; }
 .entry { padding: 44px 0 54px; border-bottom: 1px solid var(--line); }
 .entry-date { color: var(--faint); letter-spacing: .08em; }
@@ -24,6 +24,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .entry h1 { font-size: 30px; } .entry h2 { font-size: 25px; }
 .entry h2 a:hover { color: var(--accent); }
 .prose { overflow-wrap: anywhere; }
+.entry-preview.is-collapsed { display: flow-root; max-height: 9.5em; overflow: hidden; }
+.entry-preview.is-collapsed.has-overflow, :root:not(.has-js) .entry-preview.is-collapsed { -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 7.6em, transparent 9.5em); mask-image: linear-gradient(to bottom, #000 0, #000 7.6em, transparent 9.5em); }
+.entry-preview > :first-child { margin-top: 0; }
+.entry-preview > :last-child { margin-bottom: 0; }
 .prose p { margin: 18px 0; }
 .prose a { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
 .prose img { display: block; max-width: 100%; height: auto; margin: 26px auto; }
